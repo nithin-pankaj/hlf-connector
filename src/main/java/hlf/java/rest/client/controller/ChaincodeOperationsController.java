@@ -3,9 +3,9 @@ package hlf.java.rest.client.controller;
 import hlf.java.rest.client.model.ChaincodeOperations;
 import hlf.java.rest.client.model.ChaincodeOperationsType;
 import hlf.java.rest.client.service.ChaincodeOperationsService;
-import java.util.Optional;
-import java.util.Set;
+import hlf.java.rest.client.util.ESAPIUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -33,6 +36,11 @@ public class ChaincodeOperationsController {
       // accept optional collection configuration for the approval and commit
       @RequestPart(value = "collection_config", required = false)
           MultipartFile collectionConfigFile) {
+
+    networkName = (String) ESAPIUtil.stripXSSForObject(chaincodeOperations);
+    chaincodeOperations = (ChaincodeOperations) ESAPIUtil.stripXSSForObject(chaincodeOperations);
+    collectionConfigFile = (MultipartFile) ESAPIUtil.stripXSSForObject(collectionConfigFile);
+
     return new ResponseEntity<>(
         chaincodeOperationsService.performChaincodeOperation(
             networkName,
@@ -47,6 +55,11 @@ public class ChaincodeOperationsController {
       @RequestParam("network_name") @Validated String networkName,
       @RequestParam("chaincode_name") @Validated String chaincodeName,
       @RequestParam("chaincode_version") @Validated String chaincodeVersion) {
+
+    networkName = (String) ESAPIUtil.stripXSSForObject(networkName);
+    chaincodeName = (String) ESAPIUtil.stripXSSForObject(chaincodeName);
+    chaincodeVersion = (String) ESAPIUtil.stripXSSForObject(chaincodeVersion);
+
     return new ResponseEntity<>(
         chaincodeOperationsService.getCurrentSequence(networkName, chaincodeName, chaincodeVersion),
         HttpStatus.OK);
@@ -57,6 +70,11 @@ public class ChaincodeOperationsController {
       @RequestParam("network_name") @Validated String networkName,
       @RequestParam("chaincode_name") @Validated String chaincodeName,
       @RequestParam("chaincode_version") @Validated String chaincodeVersion) {
+
+    networkName = (String) ESAPIUtil.stripXSSForObject(networkName);
+    chaincodeName = (String) ESAPIUtil.stripXSSForObject(chaincodeName);
+    chaincodeVersion = (String) ESAPIUtil.stripXSSForObject(chaincodeVersion);
+
     return new ResponseEntity<>(
         chaincodeOperationsService.getCurrentPackageId(
             networkName, chaincodeName, chaincodeVersion),
@@ -70,6 +88,11 @@ public class ChaincodeOperationsController {
       @RequestParam("chaincode_version") String chaincodeVersion,
       @RequestParam("sequence") Long sequence,
       @RequestParam(value = "init_required", defaultValue = "false") boolean initRequired) {
+
+    networkName = ESAPI.encoder().encodeForHTML(networkName);
+    chaincodeName = (String) ESAPIUtil.stripXSSForObject(chaincodeName);
+    chaincodeVersion = (String) ESAPIUtil.stripXSSForObject(chaincodeVersion);
+
     ChaincodeOperations chaincodeOperations =
         ChaincodeOperations.builder()
             .chaincodeName(chaincodeName)

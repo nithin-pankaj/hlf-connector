@@ -4,10 +4,7 @@ import hlf.java.rest.client.model.ClientResponseModel;
 import hlf.java.rest.client.model.EventAPIResponseModel;
 import hlf.java.rest.client.model.MultiDataTransactionPayload;
 import hlf.java.rest.client.service.TransactionFulfillment;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import hlf.java.rest.client.util.ESAPIUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Exposes REST endpoints to take actions from the client on the fabric ledger
@@ -47,6 +49,11 @@ public class FabricClientController {
       @RequestParam("contract_name") @Validated String contractName,
       @RequestParam("transaction_function_name") @Validated String transactionFunctionName,
       @RequestParam("transaction_params") @Validated String... transactionParams) {
+
+    networkName = (String) ESAPIUtil.stripXSSForObject(networkName);
+    contractName = (String) ESAPIUtil.stripXSSForObject(contractName);
+    transactionFunctionName = (String) ESAPIUtil.stripXSSForObject(transactionFunctionName);
+
     log.info(
         "Initiated Transaction Write for Network Name: {}, Contract Name: {}, Transaction Function Name: {}, Transaction Parameters: {}",
         networkName,
@@ -75,6 +82,12 @@ public class FabricClientController {
       @RequestHeader("function") @Validated String functionName,
       @RequestHeader(value = "peers", required = false) String peerNames,
       @RequestBody @Validated String payload) {
+
+    channelName = (String) ESAPIUtil.stripXSSForObject(channelName);
+    chaincodeName = (String) ESAPIUtil.stripXSSForObject(chaincodeName);
+    functionName = (String) ESAPIUtil.stripXSSForObject(functionName);
+    peerNames = (String) ESAPIUtil.stripXSSForObject(peerNames);
+
     log.info(
         "Smart Contract init request Network Name: {}, Contract Name: {}, Function Name: {}, Endorsing Peers: {}, Transaction Parameters: {}",
         functionName,
@@ -111,6 +124,15 @@ public class FabricClientController {
       @RequestHeader(value = "collection", required = false) String collections,
       @RequestHeader(value = "transientKey", required = false) String transientKey,
       @RequestBody @Validated String payload) {
+
+    channelName = (String) ESAPIUtil.stripXSSForObject(channelName);
+    chaincodeName = (String) ESAPIUtil.stripXSSForObject(chaincodeName);
+    functionName = (String) ESAPIUtil.stripXSSForObject(functionName);
+    peerNames = (String) ESAPIUtil.stripXSSForObject(peerNames);
+    collections = (String) ESAPIUtil.stripXSSForObject(collections);
+    transientKey = (String) ESAPIUtil.stripXSSForObject(transientKey);
+    payload = (String) ESAPIUtil.stripXSSForObject(payload);
+
     log.info(
         "Initiated Transaction Write for Network Name: {}, Contract Name: {}, Transaction Function Name: {}, Endorsing Peers: {},Transaction Parameters: {}",
         channelName,
@@ -178,6 +200,14 @@ public class FabricClientController {
       @RequestParam("key") @Validated String transactionId,
       @RequestParam(value = "collection", required = false) String collections,
       @RequestParam(value = "transientKey", required = false) String transientKey) {
+
+    networkName = (String) ESAPIUtil.stripXSSForObject(networkName);
+    contractName = (String) ESAPIUtil.stripXSSForObject(contractName);
+    transactionFunctionName = (String) ESAPIUtil.stripXSSForObject(transactionFunctionName);
+    transactionId = (String) ESAPIUtil.stripXSSForObject(transactionId);
+    collections = (String) ESAPIUtil.stripXSSForObject(collections);
+    transientKey = (String) ESAPIUtil.stripXSSForObject(transientKey);
+
     log.info(
         "Initiated Transaction Read for Network Name: {}, Contract Name: {}, Transaction Function Name: {}, Transaction Id: {}",
         networkName,
@@ -218,6 +248,13 @@ public class FabricClientController {
       @RequestParam("channel") @Validated String networkName,
       @RequestParam(value = "chaincode", required = false) String chaincode,
       @RequestParam("eventType") @Validated String eventType) {
+
+    transactionId = (String) ESAPIUtil.stripXSSForObject(transactionId);
+    networkName = (String) ESAPIUtil.stripXSSForObject(networkName);
+    chaincode = (String) ESAPIUtil.stripXSSForObject(chaincode);
+    transactionId = (String) ESAPIUtil.stripXSSForObject(transactionId);
+    eventType = (String) ESAPIUtil.stripXSSForObject(eventType);
+
     log.info(
         "Initiated Transaction Read for Network Name: {}, Block Number: {}",
         networkName,
@@ -242,6 +279,11 @@ public class FabricClientController {
       @RequestParam("chaincode") @Validated String chaincodeName,
       @RequestParam("function") @Validated String functionName,
       @RequestBody MultiDataTransactionPayload payload) {
+
+    channelName = (String) ESAPIUtil.stripXSSForObject(channelName);
+    chaincodeName = (String) ESAPIUtil.stripXSSForObject(chaincodeName);
+    functionName = (String) ESAPIUtil.stripXSSForObject(functionName);
+    payload = (MultiDataTransactionPayload) ESAPIUtil.stripXSSForObject(payload);
 
     log.info(
         "Initiated Transaction Write for Network Name: {}, Chaincode Name: {}, Function: {} with Request-Payload: {}",

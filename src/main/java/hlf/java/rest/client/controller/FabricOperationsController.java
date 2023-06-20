@@ -4,6 +4,7 @@ import hlf.java.rest.client.model.ClientResponseModel;
 import hlf.java.rest.client.model.CommitChannelParamsDTO;
 import hlf.java.rest.client.model.NewOrgParamsDTO;
 import hlf.java.rest.client.service.NetworkStatus;
+import hlf.java.rest.client.util.ESAPIUtil;
 import hlf.java.rest.client.util.SerializationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class FabricOperationsController {
   @GetMapping(value = "/channel/{channelName}/configuration")
   public ResponseEntity<ClientResponseModel> getChannelConfiguration(
       @PathVariable @Validated String channelName) {
+
+    channelName = (String) ESAPIUtil.stripXSSForObject(channelName);
+
     return networkStatus.getChannelFromNetwork(channelName);
   }
 
@@ -54,6 +58,10 @@ public class FabricOperationsController {
   public ResponseEntity<ClientResponseModel> generateConfigUpdateFile(
       @PathVariable @Validated String channelName,
       @RequestBody @Validated NewOrgParamsDTO organizationDetails) {
+
+    channelName = (String) ESAPIUtil.stripXSSForObject(channelName);
+    organizationDetails = (NewOrgParamsDTO) ESAPIUtil.stripXSSForObject(organizationDetails);
+
     return networkStatus.generateConfigUpdate(channelName, organizationDetails);
   }
 
@@ -72,6 +80,10 @@ public class FabricOperationsController {
   public ResponseEntity<ClientResponseModel> signChannelConfig(
       @PathVariable @Validated String channelName,
       @RequestBody @Validated String channelConfigUpdate) {
+
+    channelName = (String) ESAPIUtil.stripXSSForObject(channelName);
+    channelConfigUpdate = (String) ESAPIUtil.stripXSSForObject(channelConfigUpdate);
+
     return networkStatus.signChannelConfigTransaction(channelName, channelConfigUpdate);
   }
 
@@ -87,6 +99,10 @@ public class FabricOperationsController {
   public ResponseEntity<ClientResponseModel> commitSignedChannelConfig(
       @PathVariable @Validated String channelName,
       @RequestBody @Validated CommitChannelParamsDTO commitChannelParamsDTO) {
+
+    channelName = (String) ESAPIUtil.stripXSSForObject(channelName);
+    commitChannelParamsDTO = (CommitChannelParamsDTO) ESAPIUtil.stripXSSForObject(commitChannelParamsDTO);
+
     return networkStatus.commitChannelConfigTransaction(channelName, commitChannelParamsDTO);
   }
 
@@ -103,6 +119,10 @@ public class FabricOperationsController {
   public ResponseEntity<ClientResponseModel> addOrgToChannel(
       @PathVariable @Validated String channelName,
       @RequestBody @Validated NewOrgParamsDTO organizationDetails) {
+
+    channelName = (String) ESAPIUtil.stripXSSForObject(channelName);
+    organizationDetails = (NewOrgParamsDTO) ESAPIUtil.stripXSSForObject(organizationDetails);
+
     return networkStatus.addOrgToChannel(channelName, organizationDetails);
   }
 
@@ -124,6 +144,9 @@ public class FabricOperationsController {
       @RequestBody @Validated String encodedJson,
       @RequestParam(name = "decodeInterior", required = true) boolean decodeInterior,
       @RequestParam(name = "prettyPrint", required = true) boolean prettyPrint) {
+
+    encodedJson = (String) ESAPIUtil.stripXSSForObject(encodedJson);
+
     return serializationUtil.decodeContents(encodedJson, decodeInterior, prettyPrint);
   }
 }
